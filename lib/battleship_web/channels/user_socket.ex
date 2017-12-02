@@ -20,8 +20,15 @@ defmodule BattleshipWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket) do
-    {:ok, socket}
+  # attributing Hangman Repo by Nat Tuck
+  def connect(%{"token" => token}, socket) do
+    case Phoenix.Token.verify(socket, "username", token, max_age: 86400) do
+      {:ok, name} ->
+        socket = assign(socket, :username, name)
+        {:ok, socket}
+      {:error, _} ->
+        :error
+    end
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

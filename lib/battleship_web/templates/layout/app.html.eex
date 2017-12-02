@@ -31,6 +31,14 @@
         <%= render @view_module, @view_template, assigns %>
       </main>
 
+      <!-- Following NatTuck's Hangman Setup -->
+      <%= if @user_token do %>
+      <script>
+        window.user_name  = "<%= @user_name %>";
+        window.user_token = "<%= @user_token %>";
+      </script>
+      <% end %>
+
     </div> <!-- /container -->
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>

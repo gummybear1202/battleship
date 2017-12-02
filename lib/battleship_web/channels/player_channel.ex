@@ -1,9 +1,16 @@
+# attributes some code to Phoenix chat example repo
 defmodule BattleshipWeb.PlayerChannel do
   use BattleshipWeb, :channel
 
-  def join("player:lobby", payload, socket) do
-    if authorized?(payload) do
+  def join("player:" <> name, _payload, socket) do
+    if authorized?(socket, name) do
+      # game = Game.new()
+      socket = socket
+      # |> assign(:game, game)
+      |> assign(:name, name)
+      # {:ok, Game.client_view(game), socket}
       {:ok, socket}
+
     else
       {:error, %{reason: "unauthorized"}}
     end
@@ -22,8 +29,13 @@ defmodule BattleshipWeb.PlayerChannel do
     {:noreply, socket}
   end
 
+  def handle_in("new:msg", msg, socket) do
+    broadcast! socket, "new:msg", %{user: msg["user"], body: msg["body"]}
+    {:reply, {:ok, %{msg: msg["body"]}}, assign(socket, :user, msg["user"])}
+  end
+
   # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
+  defp authorized?(socket, name) do
+    socket.assigns[:username] == name
   end
 end

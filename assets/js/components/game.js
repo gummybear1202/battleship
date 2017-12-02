@@ -2,9 +2,47 @@
 import React from "react";
 
 export default class Game extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = this.props.state;
+  }
+
+  // attribute to the phoenix chat example repo
+  sanitize(html){ return $("<div/>").text(html).html(); }
+
+  messageTemplate(msg){
+    let username = this.sanitize(msg.user || "anonymous")
+    let body     = this.sanitize(msg.body)
+
+    return(`<p><a href='#'>[${username}]</a>&nbsp; ${body}</p>`);
+  }
+
+  handleKeyPress(event) {
+    if(event.key == 'Enter') {
+      console.log("enter is pressed");
+      var msg = $("#message-field").val();
+      console.log('this is msg ' + msg);
+
+      this.props.channel.push("new:msg", {user: window.user_name, body: msg}).
+      receive("ok", state => this.setState(state));
+    }
+    this.props.channel.on("new:msg", msg => {
+      let chatContainer = $("#chats")
+      chatContainer.prepend(this.messageTemplate(msg))
+    })
+    return false;
+  }
+
   render() {
     return (
-      <h1> this is game. </h1>
+      <div>
+      <div className="row">
+      <input id="message-field" type="text" onKeyPress={(e) => this.handleKeyPress(e)} />
+      </div>
+
+      <div className="container" id="chats">
+      </div>
+      </div>
     );
   }
 };

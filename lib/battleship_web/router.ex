@@ -5,6 +5,7 @@ defmodule BattleshipWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
+    plug :set_user
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -23,4 +24,13 @@ defmodule BattleshipWeb.Router do
   # scope "/api", BattleshipWeb do
   #   pipe_through :api
   # end
+
+  # using Nat Tuck's Hangman repo
+  def set_user(conn, _params) do
+   user  = "user0"
+   token = Phoenix.Token.sign(BattleshipWeb.Endpoint, "username", user)
+   conn
+   |> assign(:user_name,  user)
+   |> assign(:user_token, token)
+ end
 end
