@@ -26,8 +26,6 @@ import ReactDOM from 'react-dom';
 import Game from './components/game';
 
 
-
-
 function initChannel(channel, resp) {
 
   let div = document.getElementById('main');

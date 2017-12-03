@@ -1,5 +1,6 @@
 // attributes to Nat Tuck's lecture notes and the Hangman repo
 import React from "react";
+import Grid from "./grid"
 
 export default class Game extends React.Component {
   constructor(props) {
@@ -21,11 +22,10 @@ export default class Game extends React.Component {
     if(event.key == 'Enter') {
       console.log("enter is pressed");
       var msg = $("#message-field").val();
-      console.log('this is msg ' + msg);
-
       this.props.channel.push("new:msg", {user: window.user_name, body: msg}).
       receive("ok", state => this.setState(state));
     }
+
     this.props.channel.on("new:msg", msg => {
       let chatContainer = $("#chats")
       chatContainer.prepend(this.messageTemplate(msg))
@@ -36,12 +36,26 @@ export default class Game extends React.Component {
   render() {
     return (
       <div>
-      <div className="row">
-      <input id="message-field" type="text" onKeyPress={(e) => this.handleKeyPress(e)} />
-      </div>
-
-      <div className="container" id="chats">
-      </div>
+        <div className="row">
+          <div className="col-md-4">
+            <p>Chat: </p>
+            <input id="message-field" type="text" onKeyPress={(e) => this.handleKeyPress(e)} />
+          </div>
+        </div>
+        <div className="row" >
+          <div className="col-md-4" id="chats">
+          </div>
+        </div>
+        <div className="row" >
+          <div className="col-sm-6">
+            <p> Your Board: </p>
+            <Grid game={this.state}/>
+          </div>
+          <div className="col-sm-6">
+            <p> Opponent Board: </p>
+            <Grid game={this.state}/>
+          </div>
+        </div>
       </div>
     );
   }
